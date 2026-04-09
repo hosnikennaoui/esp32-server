@@ -12,6 +12,8 @@ app.post("/upload", (req, res) => {
   res.send("تم الاستلام");
 });
 
-app.listen(3000, () => {
-  console.log("🚀 السيرفر يعمل");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("🚀 السيرفر يعمل على المنفذ", PORT);
 });
