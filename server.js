@@ -6,9 +6,9 @@ const app = express();
 app.use(express.raw({ type: "image/jpeg", limit: "10mb" }));
 
 cloudinary.config({
-  cloud_name: "djibdqdpp",
-  api_key: "YOUR_API_KEY",
-  api_secret: "YOUR_API_SECRET"
+cloud_name: "djibdqdpp",
+  api_key: "123383491632513",
+  api_secret: "zHRJDmlFnnO5LMUG0s0-7otJj0k"
 });
 
 app.post("/upload", async (req, res) => {
