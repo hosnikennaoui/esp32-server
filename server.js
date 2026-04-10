@@ -18,34 +18,27 @@ cloudinary.config({
 // 📤 استقبال الصورة ورفعها
 app.post("/upload", async (req, res) => {
   try {
-    console.log("📸 تم استقبال صورة");
+    console.log("📸 وصلت صورة");
 
-    // حفظ الصورة مؤقتًا
+    console.log("حجم البيانات:", req.body.length);
+
     const filePath = "image.jpg";
     fs.writeFileSync(filePath, req.body);
 
-    console.log("📡 جاري رفع الصورة إلى Cloudinary...");
+    console.log("📡 قبل رفع Cloudinary");
 
-    // رفع إلى Cloudinary
-    const result = await cloudinary.uploader.upload(filePath, {
-      folder: "esp32-images"
-    });
+    const result = await cloudinary.uploader.upload(filePath);
 
-    console.log("🔥 تم رفع الصورة بنجاح:");
+    console.log("🔥 نجح الرفع");
     console.log(result.secure_url);
 
-    // حذف الملف المؤقت
-    fs.unlinkSync(filePath);
+    res.json({ url: result.secure_url });
 
-    // إرسال الرابط
-    res.json({
-      success: true,
-      url: result.secure_url
-    });
+  } catch (err) {
+    console.log("❌ CLOUDINARY ERROR:");
+    console.log(err.message || err);
 
-  } catch (error) {
-    console.log("❌ خطأ:", error);
-    res.status(500).send("Upload failed");
+    res.status(500).send("error");
   }
 });
 
