@@ -18,13 +18,18 @@ cloudinary.config({
 });
 
 // 📸 استقبال الصورة من ESP32
-app.post("/upload", upload.single("image"), async (req, res) => {
+app.use(express.raw({ type: "image/jpeg", limit: "10mb" }));
+
+app.post("/upload", async (req, res) => {
   try {
     console.log("📸 تم استقبال صورة");
 
-    const filePath = req.file.path;
+    const filePath = "image.jpg";
 
-    // ☁️ رفع الصورة إلى Cloudinary
+    // حفظ الصورة مؤقتًا
+    fs.writeFileSync(filePath, req.body);
+
+    // رفع إلى Cloudinary
     const result = await cloudinary.uploader.upload(filePath, {
       folder: "esp32-images"
     });
@@ -32,20 +37,21 @@ app.post("/upload", upload.single("image"), async (req, res) => {
     console.log("🔥 تم رفع الصورة:");
     console.log(result.secure_url);
 
-    // 🧹 حذف الملف المؤقت
     fs.unlinkSync(filePath);
 
-    // 🔗 إرسال الرابط لـ ESP32 أو أي جهاز
     res.json({
       success: true,
       url: result.secure_url
     });
 
   } catch (err) {
-    console.error("❌ خطأ:", err);
-    res.status(500).send("Upload failed");
+    console.log("❌ خطأ:", err);
+    res.status(500).send("error");
   }
 });
+
+
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
