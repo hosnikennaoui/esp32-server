@@ -19,26 +19,26 @@ cloudinary.config({
 app.post("/upload", async (req, res) => {
   try {
     console.log("📸 وصلت صورة");
-
-    console.log("حجم البيانات:", req.body.length);
+    console.log("الحجم:", req.body.length);
 
     const filePath = "image.jpg";
     fs.writeFileSync(filePath, req.body);
 
-    console.log("📡 قبل رفع Cloudinary");
+    console.log("📡 قبل Cloudinary");
 
     const result = await cloudinary.uploader.upload(filePath);
 
-    console.log("🔥 نجح الرفع");
-    console.log(result.secure_url);
+    console.log("🔥 بعد Cloudinary (نجح)");
+    console.log("URL:", result.secure_url);
 
-    res.json({ url: result.secure_url });
+    return res.json({ url: result.secure_url });
 
   } catch (err) {
-    console.log("❌ CLOUDINARY ERROR:");
-    console.log(err.message || err);
+    console.log("❌ ERROR CLOUDINARY:");
+    console.log(err?.message || err);
+    console.log(err);
 
-    res.status(500).send("error");
+    return res.status(500).send("upload failed");
   }
 });
 
