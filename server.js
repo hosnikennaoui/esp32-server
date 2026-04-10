@@ -5,6 +5,7 @@ const app = express();
 
 app.use(express.raw({ type: "image/jpeg", limit: "10mb" }));
 
+
 cloudinary.config({
 cloud_name: "djibdqdpp",
   api_key: "123383491632513",
