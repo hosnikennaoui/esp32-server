@@ -1,48 +1,55 @@
+
 import express from "express";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 import multer from "multer";
 
 const app = express();
+
+// نحفظ الصور مؤقتًا
 const upload = multer({ dest: "uploads/" });
 
-// 🔐 إعداد Cloudinary
+// 🔐 إعداد Cloudinary (ضع بياناتك هنا)
 cloudinary.config({
-  cloud_name: "djibdqdpp
+   cloud_name: "djibdqdpp
 ",
   api_key: "123383491632513",
   api_secret: "zHRJDmlFnnO5LMUG0s0-7otJj0k"
 });
 
-// استقبال صورة من ESP32
+// 📸 استقبال الصورة من ESP32
 app.post("/upload", upload.single("image"), async (req, res) => {
   try {
-    const filePath = req.file.path;
-
     console.log("📸 تم استقبال صورة");
 
-    // رفع إلى Cloudinary
+    const filePath = req.file.path;
+
+    // ☁️ رفع الصورة إلى Cloudinary
     const result = await cloudinary.uploader.upload(filePath, {
       folder: "esp32-images"
     });
 
-    console.log("🔥 رابط الصورة:", result.secure_url);
+    console.log("🔥 تم رفع الصورة:");
+    console.log(result.secure_url);
 
-    // حذف الملف المؤقت
+    // 🧹 حذف الملف المؤقت
     fs.unlinkSync(filePath);
 
+    // 🔗 إرسال الرابط لـ ESP32 أو أي جهاز
     res.json({
       success: true,
       url: result.secure_url
     });
 
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Error uploading image");
+  } catch (err) {
+    console.error("❌ خطأ:", err);
+    res.status(500).send("Upload failed");
   }
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("🚀 Server running on", PORT);
+  console.log("🚀 Server running on port", PORT);
 });
+
+
